@@ -2,7 +2,7 @@
 :: this file should sync audio and video if you've had trouble with it after using blur
 
 :: set this variable to false if you want to manually find the original file and skip the checks
-set automatic=false
+set automatic=true
 :: defines input video
 set inputvideo=%~dpn1
 :: finds duration of input video
@@ -15,6 +15,7 @@ if %automatic% == false (
 if %automatic% == true (
      set inputoriginalmaybe=%inputvideo: - blur=%
 )
+if %automatic% == true set "inputoriginalmaybe=%inputoriginalmaybe%)"
 if %automatic% == true (
 	 if not exist "%inputoriginalmaybe%.mp4" echo Original file was unable to be found automatically. Maybe you're using detailed filenames?
 	 if not exist "%inputoriginalmaybe%.mp4" set automatic=false
