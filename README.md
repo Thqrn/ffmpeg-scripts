@@ -19,5 +19,5 @@ For use with https://github.com/f0e/blur
 
 Blur has an issue for me where it slightly slows down the output video so audio is ever so slightly off sync. This script tries to fix that. When you send a file to it, it will try to find the original, noon-blur file and match the audio with the output from blur. Does not support automatic finding if you use detailed filenames, but the script itself does still work (you just have to drag in the original video manually).
 
-#Add Text
+# Add Text
 Essentially a meme generator, allows a user to add top text, bottom text, and select video speed. Very simple.
