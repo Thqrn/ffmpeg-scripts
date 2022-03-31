@@ -1,6 +1,7 @@
 @echo off
-:: change force60 to true if you want the video to be force outputted to 60
-set force60=false
+:: change forcefps to true if you want the video to be force outputted to the value in forcedfpsvalue
+set forcefps=false
+set forcedfpsvalue=60
 
 set inputvideo=%*
 ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %inputvideo% -of csv=p=0 > %temp%\fps.txt
@@ -39,16 +40,12 @@ set speedq=1
 set /p speedq=Speed (leave blank for default, must be between 0.5 and 100): 
 if %speedq% gtr 100 set speedq=100
 if 1%speedq% == 1 set speedq=1
-set speedfps=60
-if %force60% == false set speedfps=%speedq%*%fpsvalue%
+set speedfps=%forcedfpsvalue%
+if %forcefps% == false set speedfps=%speedq%*%fpsvalue%
 if %speedq% == 1 (
      set "af=-c:a copy"
-	 echo working
-	 pause
 	 set speedfilter= 
 ) else (
-     echo huh
-     pause
      set "af=-af atempo=%speedq%"
 	 set speedfilter=,setpts=1/%speedq%*PTS,fps=%speedfps%
 )
@@ -60,5 +57,4 @@ if exist "%temp%\bottomtext.txt" (del "%temp%\bottomtext.txt")
 if exist "%temp%\fps.txt" (del "%temp%\fps.txt")
 
 ffmpeg -i %inputvideo% -shortest %af% -vf "%textfilter%%speedfilter%" "%~dpn1 added text.mp4"
-pause
 exit

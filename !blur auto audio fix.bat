@@ -3,32 +3,36 @@
 
 :: set this variable to false if you want to manually find the original file and skip the checks
 set automatic=true
+
 :: defines input video
-set inputvideo=%~dpn1
+set "inputvideo=%~dpn1"
 :: finds duration of input video
 ffprobe -i "%inputvideo%.mp4" -show_entries format=duration -v quiet -of csv="p=0" > %temp%\fileoneduration.txt
 ::removes " - blur" from the input video's name in an attempt to automatically find the before
 if %automatic% == false (
-     echo Automatic file finding is disabled. Please drag in the file before it was blurred.
+     echo Automatic file finding is disabled.
 	 goto skipped
 )
 if %automatic% == true (
-     set inputoriginalmaybe=%inputvideo: - blur=%
+     set "inputoriginalmaybe=%inputvideo: - blur=%"
 )
-if %automatic% == true set "inputoriginalmaybe=%inputoriginalmaybe%)"
 if %automatic% == true (
-	 if not exist "%inputoriginalmaybe%.mp4" echo Original file was unable to be found automatically. Maybe you're using detailed filenames?
-	 if not exist "%inputoriginalmaybe%.mp4" set automatic=false
-	 set inputoriginalmaybe="%inputoriginalmaybe%.mp4"
+	 if exist "%inputoriginalmaybe%.mp4" set inputoriginalmaybe="%inputoriginalmaybe%.mp4"
+	 if exist "%inputoriginalmaybe%.mp4" goto actualstuff
+)
+if %automatic% == true (
+	 if exist "%inputoriginalmaybe%).mp4" set inputoriginalmaybe="%inputoriginalmaybe%).mp4"
+	 if exist "%inputoriginalmaybe%).mp4" goto skipped
 )
 :skipped
 if %automatic% == false (
 	 echo For reference, the file you're using as the input here is "%inputvideo%.mp4"
-	 set /p inputoriginalmaybe=Please drag the original file here: 
+	 set /p inputoriginalmaybe=Please drag in the pre-blur file here: 
+	 goto actualstuff
 )
+:actualstuff
 if "%inputvideo%.mp4" == %inputoriginalmaybe% (
-     echo Original file was unable to be found automatically.
-	 echo The input file may not have been the output video from blur.
+     echo Original file was unable to be found automatically. The input file may not have been the post-blur video.
 	 set automatic=false
 	 goto skipped
 )
