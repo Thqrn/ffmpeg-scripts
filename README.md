@@ -1,6 +1,9 @@
 # What is this?
 This is a collection of batch script's I've made or am still making. Most rely on FFmpeg, you'll need that to run them. They all use drag and drop features, which means you can also use them in send-to. If you need any help add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz
 
+# Support
+As mentioned, for support either join the discord (https://discord.gg/9tRZ6C7tYz) or contact me directly on discord, Frost#5872.
+
 # Change Speed
 Uses ffmpeg to change the speed of a video file. Also changes audio speed without changing pitch. Allows you to also trim the video.
 
