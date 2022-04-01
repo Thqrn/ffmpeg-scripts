@@ -22,6 +22,9 @@ if %1check == check (
      pause
      exit
 )
+if not 1%2 == 1 set starttime=0
+if not 1%2 == 1 set time=32727
+if not 1%2 == 1 goto speedquestion
 :startquestion
 set /p starttime=Where do you want your clip to start (in seconds): 
 :: checks if it's a positive number, if not then goes back to asking for start time
@@ -57,7 +60,10 @@ if "%time%" == " " (
 :: speed
 set speedvalid=n
 set speedq=default
+if not 1%2 == 1 goto skipthispart
 set /p speedq=What should the playback speed of the video be, must be a positive number between 0.5 and 100, default is 1: 
+:skipthispart
+if not 1%2 == 1 set speedq=%2
 if "%speedq%" == " " (
      set speedq=default
 )
@@ -101,7 +107,7 @@ color 06
 ffmpeg -hide_banner -loglevel error -stats ^
 -ss %starttime% -t %time% -i %1 ^
 %filters% ^
--c:v libx264 -preset fast ^
+-c:v libx264 -preset medium ^
 -c:a aac ^
 %audiofilters% ^
 -vsync vfr -movflags +faststart "%~dpn1 (Adjus Speed).mp4"
@@ -111,4 +117,3 @@ echo\
 echo Done!
 echo\
 color 0A
-pause

@@ -46,9 +46,7 @@ set /p ftd=<%temp%\filetwoduration.txt
 set speed=%ftd%/%fod%
 :: speeds up the video to match the audio
 :: feel free to change the video settings between "-c:a copy" and "-vf" to match what you usually do
-ffmpeg -i "%inputvideo%.mp4" -i %inputoriginalmaybe% -map 0:v:0 -map 1:a:0 -shortest -c:a copy -c:v h264_nvenc -rc vbr -preset p7 -b:v 250M -cq 18 -vf "setpts=(%speed%)*PTS" "%~dpn1 (synced audio).mp4"
+ffmpeg -hide_banner -loglevel error -stats -i "%inputvideo%.mp4" -i %inputoriginalmaybe% -map 0:v:0 -map 1:a:0 -shortest -c:a copy -c:v libx264 -crf 18 -preset slow -x264-params aq-mode=3 -vf "setpts=(%speed%)*PTS" "%~dpn1 (synced audio).mp4"
 :: deletes temp files
 if exist "%temp%\fileoneduration.txt" (del "%temp%\fileoneduration.txt")
 if exist "%temp%\filetwoduration.txt" (del "%temp%\filetwoduration.txt")
-:: self explanatory
-exit
