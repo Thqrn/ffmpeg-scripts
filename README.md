@@ -4,9 +4,12 @@ This is a collection of batch script's I've made or am still making. Most rely o
 # Support
 As mentioned, for support either join the discord (https://discord.gg/9tRZ6C7tYz) or contact me directly on discord, Frost#5872.
 
+<<<<<<< HEAD
 # Note For Multiqueue
 If you want to use these files with multiqueue, you'll need the multiqueue file for the one you want, which are all in the multiqueue folder. This file must be in the same directory/folder as the non-multiqueue version of the file. Most of these are still in the testing phase so if you find anything wrong, send me a message.
 
+=======
+>>>>>>> 3d2665ccf37a9052c4a5c8df6dbf72439b90bb4c
 # Change Speed
 Uses ffmpeg to change the speed of a video file. Also changes audio speed without changing pitch. Allows you to also trim the video.
 
