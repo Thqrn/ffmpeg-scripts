@@ -1,7 +1,10 @@
 # What is this?
 This is a collection of batch script's I've made or am still making. Most rely on FFmpeg, you'll need that to run them. They all use drag and drop features, which means you can also use them in send-to. If you need any help add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz
 
-# Note For Multiqueue Support
+# Support
+As mentioned, for support either join the discord (https://discord.gg/9tRZ6C7tYz) or contact me directly on discord, Frost#5872.
+
+# Note For Multiqueue
 If you want to use these files with multiqueue, you'll need the multiqueue file for the one you want, which are all in the multiqueue folder. This file must be in the same directory/folder as the non-multiqueue version of the file. Most of these are still in the testing phase so if you find anything wrong, send me a message.
 
 # Change Speed
