@@ -30,3 +30,6 @@ Essentially a meme generator, allows a user to add top text, bottom text, and se
 
 # Extract Frame
 Extracts a frame from a video. Note that frames start at 0, so the second frame in the video is 1, the third is 2, and so on.
+
+# Change FPS
+Changes the fps of a video
