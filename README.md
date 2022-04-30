@@ -33,3 +33,6 @@ Extracts a frame from a video. Note that frames start at 0, so the second frame 
 
 # Change FPS
 Changes the fps of a video.
+
+# Metadata
+Grabs metadata and exports to a file.
