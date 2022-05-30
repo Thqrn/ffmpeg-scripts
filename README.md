@@ -1,5 +1,5 @@
 # What is this?
-This is a collection of batch script's I've made or am still making. Most require on FFmpeg, you'll need that to use them. They all use drag and drop features, which means you can also use them in send-to. If you need any help add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz
+This is a collection of scripts I've made or am still making. Most, if not all, require FFmpeg. They all use drag and drop features, which means you can also use them in send-to. If you need any help add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz
 
 # Support
 As mentioned, for support either join the discord (https://discord.gg/9tRZ6C7tYz) or contact me directly on discord, Frost#5872.
