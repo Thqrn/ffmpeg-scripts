@@ -1,3 +1,5 @@
+:: made by Frost#5872
+:: https://github.com/Thqrn/ffmpeg-scripts
 @echo off
 title Speed Changer
 color 0f

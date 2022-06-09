@@ -1,3 +1,5 @@
+:: made by Frost#5872
+:: https://github.com/Thqrn/ffmpeg-scripts
 @echo off
 set /p lowqualmusic=Please drag the desired file here, it must be an audio file: 
 set /p musicstarttime=Enter a specific start time of the music in seconds: 

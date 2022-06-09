@@ -16,6 +16,9 @@ Changes the fps of a video.
 # Change Speed
 Changes the speed of a video.
 
+# Compare Multiple
+Horizontally stacks video together for comparing. Can take unlimited inputs, but requires at least 2.
+
 # Extract Frame
 Extracts a frame from a video. Note that frames start at 0, so the second frame in the video is 1, the third is 2, and so on.
 
@@ -24,6 +27,10 @@ Interpolates a video. It should be noted that, in most cases, this looks like co
 
 # Metadata
 Extracts some metadata from a file.
+
+# Properties
+Grabs dimensions, framerate, and duration from all input videos and lists them.
+Example: https://i.ibb.co/gDr4RtN/image.jpg
 
 # Replace Audio
 Allows you to replace the audio in a video with audio from another source.

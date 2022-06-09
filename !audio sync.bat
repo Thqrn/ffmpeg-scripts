@@ -1,3 +1,6 @@
+:: made by Frost#5872
+:: https://github.com/Thqrn/ffmpeg-scripts
+
 :: this file should sync audio and video if you've had trouble with it after using blur
 :: to change the suffix, see line 27 and 29
 @echo off
