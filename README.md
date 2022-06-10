@@ -19,6 +19,9 @@ Changes the speed of a video.
 # Compare Multiple
 Horizontally stacks video together for comparing. Can take unlimited inputs, but requires at least 2.
 
+# Covert to gif
+Converts a video to a gif.
+
 # Extract Frame
 Extracts a frame from a video. Note that frames start at 0, so the second frame in the video is 1, the third is 2, and so on.
 
