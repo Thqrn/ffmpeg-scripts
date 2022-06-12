@@ -1,5 +1,9 @@
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
+
+:: preserve input aspect ratios
+set preservear=true
+
 @echo off
 set temp=%temp%\tempfolder
 rmdir %temp% /s /q > nul 2> nul
@@ -71,6 +75,7 @@ set /a totalwidth=%width%*%filecount%
 if %totalwidth% gtr 15000 set /a width=15000/%filecount%
 if not %ogwidth% == %width% set "height=((%width%/%ogwidth%)*%height%)"
 set /a width=(%width%/2)*2
+if preservear == true set height=-2
 goto aftersizecheck
 
 :filecounter
