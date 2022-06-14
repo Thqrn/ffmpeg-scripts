@@ -1,10 +1,9 @@
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
-
+@echo off
 :: preserve input aspect ratios
 set preservear=true
 
-@echo off
 set temp=%temp%\tempfolder
 rmdir %temp% /s /q > nul 2> nul
 mkdir %temp%
@@ -56,6 +55,7 @@ goto :eof
 
 :combine
 set name=%inputvideo2% + %name%
+set name=%name:~0,200%
 set /a "i+=1"
 set allinputs=%allinputs% -i "%temp%\%inputvideo2%scaled.mp4"
 goto :eof
