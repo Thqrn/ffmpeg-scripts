@@ -28,6 +28,9 @@ Extracts a frame from a video. Note that frames start at 0, so the second frame 
 # Interpolater
 Interpolates a video. It should be noted that, in most cases, this looks like complete shit.
 
+# Mask Blur
+Masks a video made with https://github.com/f0e/blur, covering artifacts. Designed for Minecraft. This is mostly just proof of concept, and doesn't look very good.
+
 # Metadata
 Extracts some metadata from a file.
 
