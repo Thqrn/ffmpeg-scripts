@@ -4,6 +4,8 @@
 @echo off
 :: set this variable to false if you want to manually find the original file and skip the checks
 set automatic=true
+:: set this to the path of the mask
+set mask=default
 
 SET mypath=%~dp0
 for %%a in (%*) do (
@@ -56,8 +58,9 @@ ffprobe -i %inputoriginalmaybe% -show_entries format=duration -v quiet -of csv="
 set /p fod=<%temp%\fileoneduration.txt
 set /p ftd=<%temp%\filetwoduration.txt
 set "speed=%fod%/%ftd%"
-if not exist "%temp%\ALPHAMASK.png" (curl -s -o "%temp%\ALPHAMASK.png" https://i.ibb.co/t89PC4s/example.png > nul)
-ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %inputoriginalmaybe% -i "%temp%\ALPHAMASK.png" -c:v qtrle -pix_fmt yuva420p -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%temp%\thisisanexample.mov"
+if not %mask% == default set "commentout=:: "
+%commentout%if not exist "%temp%\ALPHAMASK.png" (curl -s -o "%temp%\ALPHAMASK.png" https://i.ibb.co/t89PC4s/example.png > nul)
+ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %inputoriginalmaybe% -i "%temp%\ALPHAMASK.png" -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%temp%\thisisanexample.mov"
 ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %1 -i "%temp%\thisisanexample.mov" -filter_complex overlay -c:a:0 copy -c:v libx264 -preset slow -crf 16 -aq-mode 3 "%~dpn1 (masked).mp4"
 :: deletes temp files
 if exist "%temp%\ALPHAMASK.png" (del "%temp%\ALPHAMASK.png")
