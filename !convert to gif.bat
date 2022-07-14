@@ -8,10 +8,8 @@ for %%a in (%*) do (
 )
 echo.
 echo [92mDone![0m
-where /q ffplay || goto aftersound
-ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
-:aftersound
-pause
+where /q ffplay || exit
+if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
 exit
 
 

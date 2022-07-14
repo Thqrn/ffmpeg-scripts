@@ -11,8 +11,8 @@ SET mypath=%~dp0
 for %%a in (%*) do (
      call :audiofix %%a
 )
-ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
-pause
+where /q ffplay || exit
+if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
 exit
 
 :audiofix

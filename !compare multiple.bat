@@ -1,9 +1,12 @@
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
 @echo off
+
+:: OPTIONS
 :: preserve input aspect ratios
 set preservear=true
 
+:: actual code
 set temp=%temp%\tempfolder
 rmdir %temp% /s /q > nul 2> nul
 mkdir %temp%
@@ -42,7 +45,9 @@ ffmpeg -hide_banner -loglevel warning -stats%allinputs% -c:v libx264 -x264-param
 echo.
 echo [96mOutput is located at:
 echo [93m"%cd%\%name%.mp4"[96m
-echo.
+where /q ffplay || goto conti
+if not exist "C:\Windows\Media\notify.wav" (goto conti) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
+:conti
 rmdir %temp% /s /q > nul
 choice /m "Do you want to open the output file?"
 if %errorlevel% == 1 "%cd%\%name%.mp4"

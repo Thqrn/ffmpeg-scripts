@@ -6,3 +6,6 @@ set /p intnum=What do you want to interpolate to:
 for %%a in (%*) do ffmpeg -hide_banner -loglevel error -stats -i %%a -vf fps=%desired% "%%~dpna %desired% fps.mp4"
 for %%a in (%*) do ffmpeg -hide_banner -loglevel error -stats  -i "%%~dpna %desired% fps.mp4" -vf "minterpolate=fps=%intnum%" "%%~dpna %desired% to %intnum%.mp4"
 for %%a in (%*) do if exist "%%~dpna %desired% fps.mp4" (del "%%~dpna %desired% fps.mp4")
+where /q ffplay || exit
+if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
+exit
