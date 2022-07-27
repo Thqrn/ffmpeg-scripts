@@ -1,12 +1,17 @@
+:: This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+:: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+:: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
+
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
 
 :: this file should sync audio and video if you've had trouble with it after using blur
-:: to change the suffix, see line 27 and 29
+:: to change the suffix, see lines 27 and 29
+
 @echo off
 SET mypath=%~dp0
 for %%a in (%*) do (
-     call :audiofix %%a
+    call :audiofix %%a
 )
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
@@ -25,31 +30,31 @@ ffprobe -i "%inputvideo%.mp4" -show_entries format=duration -v quiet -of csv="p=
 ::removes " - blur" from the input video's name in an attempt to automatically find the before
 if %automatic% == false (
     echo Automatic file finding is disabled.
-	 goto skipped
+    goto skipped
 )
 :: CHANGE THE " - blur" TO WHATEVER YOUR SUFFIX IS
 if %automatic% == true (
-     set "inputoriginalmaybe=%inputvideo: - blur=%"
+    set "inputoriginalmaybe=%inputvideo: - blur=%"
 )
 if %automatic% == true (
-	 if exist "%inputoriginalmaybe%.mp4" set inputoriginalmaybe="%inputoriginalmaybe%.mp4"
-	 if exist "%inputoriginalmaybe%.mp4" goto actualstuff
+    if exist "%inputoriginalmaybe%.mp4" set inputoriginalmaybe="%inputoriginalmaybe%.mp4"
+    if exist "%inputoriginalmaybe%.mp4" goto actualstuff
 )
 if %automatic% == true (
-	 if exist "%inputoriginalmaybe%).mp4" set inputoriginalmaybe="%inputoriginalmaybe%).mp4"
-	 if exist "%inputoriginalmaybe%).mp4" goto skipped
+    if exist "%inputoriginalmaybe%).mp4" set inputoriginalmaybe="%inputoriginalmaybe%).mp4"
+    if exist "%inputoriginalmaybe%).mp4" goto skipped
 )
 :skipped
 if %automatic% == false (
-	 echo For reference, the file you're using as the input here is "%inputvideo%.mp4"
-	 set /p inputoriginalmaybe=Please drag in the pre-blur file here: 
-	 goto actualstuff
+    echo For reference, the file you're using as the input here is "%inputvideo%.mp4"
+    set /p inputoriginalmaybe=Please drag in the pre-blur file here: 
+    goto actualstuff
 )
 :actualstuff
 if "%inputvideo%.mp4" == %inputoriginalmaybe% (
-     echo Original file was unable to be found automatically. The input file may not have been the post-blur video.
-	 set automatic=false
-	 goto skipped
+    echo Original file was unable to be found automatically. The input file may not have been the post-blur video.
+    set automatic=false
+    goto skipped
 )
 :: finds duration of original video
 ffprobe -i %inputoriginalmaybe% -show_entries format=duration -v quiet -of csv="p=0" > %temp%\filetwoduration.txt

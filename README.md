@@ -1,6 +1,8 @@
 # What is this?
 This is a collection of batch script's I've made or am still making. Most (if not all) require FFmpeg, meaning you'll need that to use them. They all use drag and drop and are designed for use with send-to. If you need any help, add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz.
 
+Scripts with more niche uses can be found in the folder labled "niche".
+
 # Add Text
 Essentially a meme generator. Allows a user to add top text and bottom text.
 
@@ -28,9 +30,6 @@ Extracts a frame from videos. Note that frames start at 0, so the second frame i
 # Interpolater
 Interpolates a video. This was designed to give extremely terrible looking videos with lots of artifacts.
 
-# Mask Blur
-Masks a video made with https://github.com/f0e/blur, covering artifacts. Designed for Minecraft. This is just proof of concept, and **is not made to look good**.
-
 # Metadata
 Extracts whatever metadata FFmpeg can find from a file.
 
@@ -40,6 +39,9 @@ Example: ![](https://i.ibb.co/pLjqC3q/image.jpg)
 
 # Replace Audio
 Allows you to replace the audio in a video with audio from another source.
+
+# Resample Video
+Resamples a video to a lower framerate using tmix.
 
 # Upscale NN
 Scales a file with nearest neighbor. This works with images, videos, gifs, etc. It's planned to add more algorithms in the future.

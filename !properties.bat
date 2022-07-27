@@ -1,3 +1,7 @@
+:: This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+:: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+:: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
+
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
 @echo off
@@ -11,10 +15,10 @@ if %errorlevel% == 1 set showfc=y
 if %errorlevel% == 2 set showfc=n
 :: for each file used as an input, find its properties
 for %%a in (%*) do (
-   set inputvideo=%%a
-   set inputviduserfriendly=%%~nxa
-   call :findproperties
-   echo -----------------------------------------------------------------------------------------------------------------------
+    set inputvideo=%%a
+    set inputviduserfriendly=%%~nxa
+    call :findproperties
+    echo -----------------------------------------------------------------------------------------------------------------------
 )
 :: deleting temp folder
 rmdir %temp%\propertiesfinder /s /q
