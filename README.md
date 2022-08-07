@@ -45,3 +45,6 @@ Resamples a video to a lower framerate using tmix.
 
 # Upscale NN
 Scales a file with nearest neighbor. This works with images, videos, gifs, etc. It's planned to add more algorithms in the future.
+
+# WebM Scaling
+Makes a WebM file with a variable resolution, creating an "bouncing" effect.
