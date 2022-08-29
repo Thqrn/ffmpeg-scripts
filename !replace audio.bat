@@ -7,7 +7,7 @@
 @echo off
 set /p lowqualmusic=Please drag the desired file here, it must be an audio file: 
 set /p musicstarttime=Enter a specific start time of the music in seconds: 
-choice /c CR /m /n "Do you want to [C]opy the streams or [R]eencode?"
+choice /c CR /n /m "Do you want to [C]opy the streams or [R]eencode?"
 if %errorlevel% == 1 (for %%a in (%*) do ffmpeg -loglevel warning -stats -i %%a -ss %musicstarttime% -i %lowqualmusic% -c copy -map 0:v:0 -map 1:a:0 -shortest "%%~dpna (replaced audio).mp4")
 if %errorlevel% == 2 (for %%a in (%*) do ffmpeg -loglevel warning -stats -i %%a -ss %musicstarttime% -i %lowqualmusic% -c:v copy -preset slow -c:a aac -b:a 256k -map 0:v:0 -map 1:a:0 -shortest "%%~dpna (replaced audio).mp4")
 where /q ffplay || exit
