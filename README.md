@@ -6,6 +6,9 @@ Scripts with more niche uses can be found in the folder labled "niche".
 # Add Text
 Essentially a meme generator. Allows a user to add top text and bottom text.
 
+# Artifact Hunter
+Randomly zooms in and crops a random part of a random frame from a video.
+
 # Audio Sync
 Syncs audio with a video. By default, the program finds a version of the input file not ending in ` - blur` as I use it for that program, but that can be easily changed. If no file is found automatically, it will ask for one.
 
