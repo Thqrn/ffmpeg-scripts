@@ -5,7 +5,7 @@
 :main
 @echo off
 setlocal enabledelayedexpansion
-set version=1.0.0
+set version=1.0.1
 title Artifact Hunter v%version%
 set position=r
 choice /m "[S]imple or [A]dvanced?" /c SA /n
@@ -18,7 +18,7 @@ for %%a in (%*) do (
     title [!filesdone!/%totalfiles%] Artifact Hunter v%version%
     set filesdoneold=!filesdone!
     set /a filesdone=!filesdone!+1
-    call :render %%a
+    call :render "%%~a"
     set scaleq=%ogscaleq%
 )
 title [Done] Artifact Hunter v%version%
@@ -48,8 +48,9 @@ goto :eof
 
 :render
 if not defined scaleq set /a scaleq=%random% * 10 / 32768 + 3
-ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -i %1 -of csv=p=0 > %newtemp%\frames.txt
-set /p frames=<%newtemp%\frames.txt
+ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -i %1 -of csv=p=0 > %temp%\frames.txt
+set /p frames=<%temp%\frames.txt
+if exist "%temp%\frames.txt" (del "%temp%\frames.txt")
 ffprobe -v error -select_streams v:0 -show_entries stream=width -i %1 -of csv=p=0 > %temp%\width.txt
 ffprobe -v error -select_streams v:0 -show_entries stream=height -i %1 -of csv=p=0 > %temp%\height.txt
 set /p height=<%temp%\height.txt
@@ -84,7 +85,11 @@ if not %totalfiles% == 1 (
 ) else (
     echo [38;2;254;165;0mEncoding...[0m
 )
-ffmpeg -hide_banner -stats_period 0.05 -loglevel error -stats -i %1 -vf "select=eq(n\,%framenum%),crop=%desiredwidth%:%desiredheight%:%posx%:%posy%,%textfilter%" -frames:v 1 -c:v png "%filename%.png"
+if %frames% == 1 (
+    ffmpeg -hide_banner -stats_period 0.05 -loglevel error -stats -i %1 -vf "crop=%desiredwidth%:%desiredheight%:%posx%:%posy%,%textfilter%" -c:v png "%filename%.png"
+) else (
+    ffmpeg -hide_banner -stats_period 0.05 -loglevel error -stats -i %1 -vf "select=eq(n\,%framenum%),crop=%desiredwidth%:%desiredheight%:%posx%:%posy%,%textfilter%" -frames:v 1 -c:v png "%filename%.png"
+)
 goto :eof
 
 :renamefile
