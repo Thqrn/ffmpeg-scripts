@@ -5,6 +5,8 @@
 :: made by Frost#5872
 :: https://github.com/Thqrn/ffmpeg-scripts
 @echo off
+choice /c me /n /m "Press [m] to remux (faster) or [e] to reencode (slower)" 
+if %errorlevel% == 1 goto remux
 set /p scale=Amount to scale down by: 
 set /p fps=Frames per second: 
 for %%a in (%*) do (
@@ -16,6 +18,13 @@ where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
 exit
 
+:remux
+for %%a in (%*) do ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -i %%a -f gif "%%~dpna.gif"
+echo.
+echo [92mDone![0m
+where /q ffplay || exit
+if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
+exit
 
 :conversion
 ffprobe -v error -select_streams v:0 -show_entries stream=width -i %1 -of csv=p=0 > %temp%\width.txt
