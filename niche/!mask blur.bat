@@ -63,6 +63,7 @@ if %fpsvalue% gtr 90 (
     set /p continue=Continue? [Y/N]
     if not "!continue!" == "Y" exit
 )
+echo Output FPS: %fpsvalue%
 :: finds duration of original video
 ffprobe -i %blurredvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\filetwoduration.txt
 :: sets them to variables
