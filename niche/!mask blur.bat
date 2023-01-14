@@ -56,6 +56,9 @@ echo Resample Enabled: %resample%
 ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %blurredvid% -of csv=p=0 > %maskblurtemp%\fpsv.txt
 set /p fpsvalue=<%maskblurtemp%\fpsv.txt
 set /a fpsvalue=%fpsvalue%
+ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %ogvid% -of csv=p=0 > %maskblurtemp%\fpsv.txt
+set /p fpsvalueOG=<%maskblurtemp%\fpsv.txt
+set /a fpsvalueOG=%fpsvalueOG%
 if exist "%maskblurtemp%\fpsv.txt" (del "%maskblurtemp%\fpsv.txt")
 if %fpsvalue% gtr 90 (
     echo WARNING: Your video has a framerate of %fpsvalue%, indicating that you may have inputted the INPUT file for blur, and not
@@ -64,22 +67,14 @@ if %fpsvalue% gtr 90 (
     if not "!continue!" == "Y" exit
 )
 echo Output FPS: %fpsvalue%
-:: finds duration of original video
-ffprobe -i %blurredvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\filetwoduration.txt
-:: sets them to variables
-set /p fod=<%maskblurtemp%\fileoneduration.txt
-set /p ftd=<%maskblurtemp%\filetwoduration.txt
-set "speed=%fod%/%ftd%"
 if not exist %mask% (curl -s -o %mask% https://i.ibb.co/t89PC4s/example.png > nul)
 if %resample% == true (
-    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,tmix=frames=%fpsvalue%,fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
+    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "tmix=frames=(%fpsvalueOG%/%fpsvalue%),fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
 ) else (
-    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
+    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
 )
 ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %blurredvid% -i "%maskblurtemp%\thisisanexample.mov" -filter_complex overlay -c:a:0 copy -c:v libx264 -preset slow -crf 15 -aq-mode 3 "%~dpn1 (masked).mp4"
 :: deletes maskblurtemp files
-if exist "%maskblurtemp%\fileoneduration.txt" (del "%maskblurtemp%\fileoneduration.txt")
-if exist "%maskblurtemp%\filetwoduration.txt" (del "%maskblurtemp%\filetwoduration.txt")
 if exist "%maskblurtemp%\thisisanexample.mov" (del "%maskblurtemp%\thisisanexample.mov")
 if exist maskblurtemp (rmdir /s /q maskblurtemp)
 goto :eof
