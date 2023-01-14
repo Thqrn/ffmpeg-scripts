@@ -9,10 +9,16 @@
 :: https://github.com/Thqrn/ffmpeg-scripts
 
 @echo off
+setlocal enabledelayedexpansion
 :: set this variable to false if you want to manually find the original file and skip the checks
 set automatic=true
+:: resample the original video when masking to help it blend in better
+set resample=false
 :: set this to the path of the mask
-set mask="%temp%\ALPHAMASK.png"
+if exist "%temp%/maskblurtemp" (rmdir /s /q "%temp%/maskblurtemp")
+mkdir "%temp%/maskblurtemp"
+set maskblurtemp=%temp%/maskblurtemp
+set mask="D:\Videos\Clips\obs\resample testing\ALPHAMAS2K.png"
 
 SET mypath=%~dp0
 for %%a in (%*) do (
@@ -24,52 +30,61 @@ exit
 
 :audiofix
 :: defines input video
-set "inputvideo=%~dpn1"
+set "blurredvid=%1"
 :: finds duration of input video
-ffprobe -i "%inputvideo%.mp4" -show_entries format=duration -v quiet -of csv="p=0" > %temp%\fileoneduration.txt
-:: rewebmes " - blur" from the input video's name in an attempt to automatically find the before
-if %automatic% == false (
-    echo Automatic file finding is disabled.
-	 goto skipped
-)
+ffprobe -i %blurredvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\fileoneduration.txt
+:: rewebmes " - blur" from the input video's name in an atmaskblurtempt to automatically find the before
 :: CHANGE THE " - blur" TO WHATEVER YOUR SUFFIX IS
-if %automatic% == true (
-     set "inputoriginalmaybe=%inputvideo: - blur=%"
+if "%automatic%" == "true" (
+    set "ogvid=%blurredvid: - blur=%"
+    if exist !ogvid! (
+        if !ogvid! NEQ %blurredvid% goto afterfound
+    )
+    set ogvid="%~dpn1 - blur%~x1"
+    if not exist !ogvid! (
+        goto skipped
+    ) else (
+        set blurredvid=!ogvid!
+        set "ogvid=%blurredvid%"
+    )
 )
-if %automatic% == true (
-	 if exist "%inputoriginalmaybe%.mp4" set inputoriginalmaybe="%inputoriginalmaybe%.mp4"
-	 if exist "%inputoriginalmaybe%.mp4" goto actualstuff
+:afterfound
+echo Original Input Video: !ogvid!
+echo Blurred Video: !blurredvid!
+echo Mask: %mask%
+echo Resample Enabled: %resample%
+ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %blurredvid% -of csv=p=0 > %maskblurtemp%\fpsv.txt
+set /p fpsvalue=<%maskblurtemp%\fpsv.txt
+set /a fpsvalue=%fpsvalue%
+if exist "%maskblurtemp%\fpsv.txt" (del "%maskblurtemp%\fpsv.txt")
+if %fpsvalue% gtr 90 (
+    echo WARNING: Your video has a framerate of %fpsvalue%, indicating that you may have inputted the INPUT file for blur, and not
+    echo the OUTPUT. Either try again with the OUTPUT file, or press [Y] to continue anyway.
+    set /p continue=Continue? [Y/N]
+    if not "!continue!" == "Y" exit
 )
-if %automatic% == true (
-	 if exist "%inputoriginalmaybe%).mp4" set inputoriginalmaybe="%inputoriginalmaybe%).mp4"
-	 if exist "%inputoriginalmaybe%).mp4" goto skipped
-)
-:skipped
-if %automatic% == false (
-	 echo For reference, the file you're using as the input here is "%inputvideo%.mp4"
-	 set /p inputoriginalmaybe=Please drag in the pre-blur file here: 
-	 goto actualstuff
-)
-:actualstuff
-if "%inputvideo%.mp4" == %inputoriginalmaybe% (
-    echo Original file was unable to be found automatically. The input file may not have been the post-blur video.
-	 set automatic=false
-	 goto skipped
-)
-ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %1 -of csv=p=0 > %temp%\fpsv.txt
-set /p fpsvalue=<%temp%\fpsv.txt
-if exist "%temp%\fpsv.txt" (del "%temp%\fpsv.txt")
 :: finds duration of original video
-ffprobe -i %inputoriginalmaybe% -show_entries format=duration -v quiet -of csv="p=0" > %temp%\filetwoduration.txt
+ffprobe -i %ogvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\filetwoduration.txt
 :: sets them to variables
-set /p fod=<%temp%\fileoneduration.txt
-set /p ftd=<%temp%\filetwoduration.txt
+set /p fod=<%maskblurtemp%\fileoneduration.txt
+set /p ftd=<%maskblurtemp%\filetwoduration.txt
 set "speed=%fod%/%ftd%"
 if not exist %mask% (curl -s -o %mask% https://i.ibb.co/t89PC4s/example.png > nul)
-ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %inputoriginalmaybe% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%temp%\thisisanexample.mov"
-ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %1 -i "%temp%\thisisanexample.mov" -filter_complex overlay -c:a:0 copy -c:v libx264 -preset slow -crf 16 -aq-mode 3 "%~dpn1 (masked).mp4"
-:: deletes temp files
-if exist "%temp%\fileoneduration.txt" (del "%temp%\fileoneduration.txt")
-if exist "%temp%\filetwoduration.txt" (del "%temp%\filetwoduration.txt")
-if exist "%temp%\thisisanexample.mov" (del "%temp%\thisisanexample.mov")
+if %resample% == true (
+    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,tmix=frames=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
+) else (
+    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
+)
+ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %blurredvid% -i "%maskblurtemp%\thisisanexample.mov" -filter_complex overlay -c:a:0 copy -c:v libx264 -preset slow -crf 15 -aq-mode 3 "%~dpn1 (masked).mp4"
+:: deletes maskblurtemp files
+if exist "%maskblurtemp%\fileoneduration.txt" (del "%maskblurtemp%\fileoneduration.txt")
+if exist "%maskblurtemp%\filetwoduration.txt" (del "%maskblurtemp%\filetwoduration.txt")
+if exist "%maskblurtemp%\thisisanexample.mov" (del "%maskblurtemp%\thisisanexample.mov")
+if exist maskblurtemp (rmdir /s /q maskblurtemp)
 goto :eof
+
+:skipped
+echo ERROR: Original (unblurred) file not found. Please provide it manually.
+echo For reference, the BLURRED file should be %blurredvid%.
+set /p ogvid=Please drag in the pre-blur file here: 
+goto afterfound
