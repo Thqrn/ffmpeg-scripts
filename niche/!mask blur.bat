@@ -71,7 +71,7 @@ set /p ftd=<%maskblurtemp%\filetwoduration.txt
 set "speed=%fod%/%ftd%"
 if not exist %mask% (curl -s -o %mask% https://i.ibb.co/t89PC4s/example.png > nul)
 if %resample% == true (
-    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,tmix=frames=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
+    ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,tmix=frames=%fpsvalue%,fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
 ) else (
     ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "setpts=(%speed%)*PTS,fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
 )
