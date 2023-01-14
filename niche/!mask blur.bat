@@ -13,28 +13,25 @@ setlocal enabledelayedexpansion
 :: set this variable to false if you want to manually find the original file and skip the checks
 set automatic=true
 :: resample the original video when masking to help it blend in better
-set resample=false
+set resample=true
 :: set this to the path of the mask
 if exist "%temp%/maskblurtemp" (rmdir /s /q "%temp%/maskblurtemp")
 mkdir "%temp%/maskblurtemp"
 set maskblurtemp=%temp%/maskblurtemp
-set mask="D:\Videos\Clips\obs\resample testing\ALPHAMAS2K.png"
+set mask="%maskblurtemp%/blurmask.png"
 
-SET mypath=%~dp0
+:: for each input, find an output and mask it
 for %%a in (%*) do (
-    call :audiofix %%a
+    call :maskvideo %%a
 )
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
 exit
 
-:audiofix
-:: defines input video
+:maskvideo
+:: defines blurred video
 set "blurredvid=%1"
-:: finds duration of input video
-ffprobe -i %blurredvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\fileoneduration.txt
-:: rewebmes " - blur" from the input video's name in an atmaskblurtempt to automatically find the before
-:: CHANGE THE " - blur" TO WHATEVER YOUR SUFFIX IS
+:: tries to find the original video
 if "%automatic%" == "true" (
     set "ogvid=%blurredvid: - blur=%"
     if exist !ogvid! (
@@ -53,21 +50,25 @@ echo Original Input Video: !ogvid!
 echo Blurred Video: !blurredvid!
 echo Mask: %mask%
 echo Resample Enabled: %resample%
+:: finds framerate of blurred video
 ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %blurredvid% -of csv=p=0 > %maskblurtemp%\fpsv.txt
 set /p fpsvalue=<%maskblurtemp%\fpsv.txt
 set /a fpsvalue=%fpsvalue%
+:: finds framerate of original video
 ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -i %ogvid% -of csv=p=0 > %maskblurtemp%\fpsv.txt
 set /p fpsvalueOG=<%maskblurtemp%\fpsv.txt
 set /a fpsvalueOG=%fpsvalueOG%
 if exist "%maskblurtemp%\fpsv.txt" (del "%maskblurtemp%\fpsv.txt")
-if %fpsvalue% gtr 90 (
-    echo WARNING: Your video has a framerate of %fpsvalue%, indicating that you may have inputted the INPUT file for blur, and not
-    echo the OUTPUT. Either try again with the OUTPUT file, or press [Y] to continue anyway.
-    set /p continue=Continue? [Y/N]
+:: checks if the framerate is too high (possibly used unblurred video as input?)
+if %fpsvalue% gtr %fpsvalueOG% (
+    echo WARNING: Your unblurred video is at %fpsvalue% FPS, while your blurred video is at %fpsvalueOG% FPS.
+    echo This may indicate that you input the unblurred video instead of the blurred video.
+    echo Proceed? [Y/N]
+    set /p "continue="
     if not "!continue!" == "Y" exit
 )
 echo Output FPS: %fpsvalue%
-if not exist %mask% (curl -s -o %mask% https://i.ibb.co/t89PC4s/example.png > nul)
+if not exist %mask% (curl -s -o %mask% https://i.ibb.co/SrBPSsM/mask.png > nul)
 if %resample% == true (
     ffmpeg -hide_banner -stats_period 0.5 -loglevel error -stats -i %ogvid% -i %mask% -pix_fmt rgba -c:v png -an -filter_complex "tmix=frames=(%fpsvalueOG%/%fpsvalue%),fps=%fpsvalue%,alphamerge" "%maskblurtemp%\thisisanexample.mov"
 ) else (
@@ -81,6 +82,6 @@ goto :eof
 
 :skipped
 echo ERROR: Original (unblurred) file not found. Please provide it manually.
-echo For reference, the BLURRED file should be %blurredvid%.
+echo For reference, the blurred file should be %blurredvid%.
 set /p ogvid=Please drag in the pre-blur file here: 
 goto afterfound
