@@ -64,7 +64,7 @@ if %fpsvalue% gtr 90 (
     if not "!continue!" == "Y" exit
 )
 :: finds duration of original video
-ffprobe -i %ogvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\filetwoduration.txt
+ffprobe -i %blurredvid% -show_entries format=duration -v quiet -of csv="p=0" > %maskblurtemp%\filetwoduration.txt
 :: sets them to variables
 set /p fod=<%maskblurtemp%\fileoneduration.txt
 set /p ftd=<%maskblurtemp%\filetwoduration.txt
