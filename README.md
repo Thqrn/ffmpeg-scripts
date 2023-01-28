@@ -1,6 +1,8 @@
 # What is this?
 This is a collection of batch script's I've made or am still making. Most (if not all) require FFmpeg, meaning you'll need that to use them. They all use drag and drop and are designed for use with send-to. If you need any help, add me on discord, Frost#5872, or join my server, https://discord.gg/9tRZ6C7tYz.
 
+*This readme hasn't been updated in a while so take most of the information with a grain of salt.*
+
 Scripts with more niche uses can be found in the folder labled "niche".
 
 # Add Text
