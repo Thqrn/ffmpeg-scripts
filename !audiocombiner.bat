@@ -27,6 +27,7 @@ for %%a in (%*) do (
 )
 choice /c %values% /n /m "Select the input to use the video of: "
 set /a videoinput=%errorlevel%
+set /a videoindex=%videoinput%-1
 goto :setter
 :done
 
@@ -52,7 +53,7 @@ set audiofile=0
 for %%a in (%*) do (
     set /p "volume=Input a volume for %%~na (1.0 is default) or leave blank: "
     if not defined volume set volume=1.0
-    set volumes=!volumes![!audiofile!]volume=!volume![out!audiofile!]
+    set volumes=!volumes![!audiofile!:a]volume=!volume![out!audiofile!]
     set outaudio=!outaudio![out!audiofile!]
     set "volume="
     set /a audiofile+=1
@@ -66,13 +67,15 @@ if %errorlevel% == 1 set normalize=1
 if %errorlevel% == 2 set normalize=0
 :: for each input
 for %%a in (%*) do (
-    set ffinputs=!ffinputs! -i %%a
+    set /a inputindex+=1
+    if !inputindex!==%videoinput% (set "ffinputs= -i %%a!ffinputs!") else (set "ffinputs=!ffinputs! -i %%a")
 )
 
 cls
 
 if exist "%videofile% (combined audio)%ext%" (call :renamefile) else (set "filename=%videofile% (combined audio)%ext%")
-ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=longest" -shortest -c:v:!videoinput! copy -c:a aac -b:a 320k "%filename%"
+ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=first" -shortest -c:v:0 copy -bsf:v:0 null -c:a aac -b:a 320k "%filename%"
+echo ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=first;[0:v]copy" -shortest -c:v:0 copy -bsf:v:0 null -c:a aac -b:a 320k "%filename%"
 
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
