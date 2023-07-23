@@ -2,8 +2,11 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-:: made by Frost#5872
+:: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
+
+:: adds simple text to a video
+
 @echo off
 set "toptext= "
 set /p toptext=Top text: 
@@ -11,7 +14,17 @@ set "bottomtext= "
 set /p bottomtext=Bottom text: 
 set "toptext=%toptext: =SPACEHERE%"
 set "bottomtext=%bottomtext: =SPACEHERE%"
-SET mypath=%~dp0
+echo [N]VENC
+echo [C]PU
+echo [A]MF
+echo [Q]uicksync
+choice /c NCAQ /n /m "Select an encoder: "
+set ch=%errorlevel%
+if %ch% == 1 set encodingargs=-c:v h264_nvenc -preset p7 -rc vbr -b:v 250M -cq 14
+if %ch% == 2 set encodingargs=-c:v libx264 -preset slow -crf 17 -aq-mode 3
+if %ch% == 3 set encodingargs=-c:v h264_amf -quality quality -qp_i 16 -qp_p 18 -qp_b 22
+if %ch% == 4 set encodingargs=-c:v h264_qsv -preset veryslow -global_quality:v 15
+set mypath=%~dp0
 for %%a in (%*) do (
     call :addtext %%a %toptext% %bottomtext%
 )
@@ -49,5 +62,5 @@ if exist "%temp%\toptext.txt" (del "%temp%\toptext.txt")
 if exist "%temp%\bottomtext.txt" (del "%temp%\bottomtext.txt")
 if exist "%temp%\width.txt" (del "%temp%\width.txt")
 if exist "%temp%\height.txt" (del "%temp%\height.txt")
-ffmpeg -hide_banner -loglevel error -stats -i %inputvideo% -shortest -c:v libx264 -c:a copy -vf "%textfilter%" -preset fast "%~dpn1 added text.mp4"
+ffmpeg -hide_banner -loglevel error -stats -i %inputvideo% -shortest %encodingargs% -c:a copy -vf "%textfilter%" "%~dpn1 added text.mp4"
 goto :eof

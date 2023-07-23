@@ -5,8 +5,17 @@
 :: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
+:: splits the audio channels of a file into multiple audio files
+
 @echo off
-for %%a in (%*) do ffmpeg -i %%a -c copy -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a -f ffmetadata "%%~dpna metadata.txt"
-where /q ffplay || exit
-if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
-exit
+set name=%~n1
+ffprobe -v error -select_streams a:0 -show_entries stream=channels -of csv="p=0" %1 > %temp%/channels.txt
+set /p channels=<%temp%/channels.txt
+set /a channels=%channels:~0,1%
+del %temp%/channels.txt
+set total=0
+:chanloop
+set filter=%filter% -map_channel 0.1.%total% "audio channels/%name%_%total%.wav"
+set /a total=%total%+1
+if %total% lss %channels% goto :chanloop
+ffmpeg -stats_period 0.05 -hide_banner -loglevel fatal -stats -i %1%filter%

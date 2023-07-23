@@ -2,8 +2,11 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-:: made by Frost#5872
+:: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
+
+:: extracts a frame from a video
+
 @echo off
 set /p framenum=Frame num, starts at 0: 
 for %%a in (%*) do ffmpeg -hide_banner -loglevel error -stats -i %%a -vf "select=eq(n\,%framenum%)" -frames:v 1 -c:v png "%%~dpna (frame %framenum%).png"

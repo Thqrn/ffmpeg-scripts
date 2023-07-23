@@ -2,7 +2,7 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-:: made by Frost#5872
+:: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
 :: this file should sync audio and video if you've had trouble with it after using blur
@@ -22,6 +22,17 @@ exit
 
 :: set this variable to false if you want to manually find the original file and skip the checks
 set automatic=true
+
+echo [N]VENC
+echo [C]PU
+echo [A]MF
+echo [Q]uicksync
+choice /c NCAQ /n /m "Select an encoder: "
+set ch=%errorlevel%
+if %ch% == 1 set encodingargs=-c:v h264_nvenc -preset p7 -rc vbr -b:v 250M -cq 14
+if %ch% == 2 set encodingargs=-c:v libx264 -preset slow -crf 17 -aq-mode 3
+if %ch% == 3 set encodingargs=-c:v h264_amf -quality quality -qp_i 16 -qp_p 18 -qp_b 22
+if %ch% == 4 set encodingargs=-c:v h264_qsv -preset veryslow -global_quality:v 15
 
 :: defines input video
 set "inputvideo=%~dpn1"
@@ -66,7 +77,7 @@ set /p ftd=<%temp%\filetwoduration.txt
 set speed=%ftd%/%fod%
 :: speeds up the video to match the audio
 :: feel free to change the video settings between "-c:a copy" and "-vf" to match what you usually do
-ffmpeg -hide_banner -loglevel error -stats -i "%inputvideo%.mp4" -i %inputoriginalmaybe% -map 0:v:0 -map 1:a:0 -shortest -c:a copy -c:v libx264 -crf 16 -preset slow -x264-params aq-mode=3 -vf "setpts=(%speed%)*PTS" "%~dpn1 (synced audio).mp4"
+ffmpeg -hide_banner -loglevel error -stats -i "%inputvideo%.mp4" -i %inputoriginalmaybe% -map 0:v:0 -map 1:a:0 -shortest -c:a copy %encodingargs% -vf "setpts=(%speed%)*PTS" "%~dpn1 (synced audio).mp4"
 :: deletes temp files
 if exist "%temp%\fileoneduration.txt" (del "%temp%\fileoneduration.txt")
 if exist "%temp%\filetwoduration.txt" (del "%temp%\filetwoduration.txt")

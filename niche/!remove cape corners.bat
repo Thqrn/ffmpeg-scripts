@@ -2,10 +2,11 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-:: made by Frost#5872
+:: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
 :: this script is made to remove the corner of minecraft capes that don't have transparent corners
+
 @echo off
 if not exist "ALPHAMAP.png" (curl -s -o "ALPHAMAP.png" https://i.ibb.co/T2kT08c/ALPHAMAP.png > nul) 
 for %%a in (%*) do call :capescale %%a

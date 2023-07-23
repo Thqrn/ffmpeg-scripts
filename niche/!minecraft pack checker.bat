@@ -2,12 +2,13 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-:: made by Frost#5872
+:: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
 :: this script checks if a (unzipped) minecraft texture pack contains a pack.png and pack.mcmeta file
 :: if pack.png is more than 64x64 in resolution, it is downscaled to 64x64
 :: it also logs which packs are missing things
+
 @echo off
 cd /d "%~dp1"
 for %%a in (%*) do (
