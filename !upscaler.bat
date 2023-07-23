@@ -5,7 +5,7 @@
 :: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
-:: upscaler
+:: upscale videos with tons of customization
 
 @echo off
 setlocal enabledelayedexpansion

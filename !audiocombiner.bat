@@ -5,7 +5,7 @@
 :: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
-:: upscaler
+:: audio combiner - combine the audio of multiple files into one file
 
 @echo off
 setlocal enabledelayedexpansion
@@ -73,7 +73,7 @@ cls
 
 if exist "%videofile% (combined audio)%ext%" (call :renamefile) else (set "filename=%videofile% (combined audio)%ext%")
 ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=longest" -shortest -c:v:!videoinput! copy -c:a aac -b:a 320k "%filename%"
-echo ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%,%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=longest" -shortest -c:v:!videoinput! copy -c:a aac -b:a 320k "%filename%"
+
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
 pause
