@@ -5,9 +5,6 @@ This is a collection of batch script's I've made or am still making. Most (if no
 
 Scripts with more niche uses can be found in the folder labled "niche".
 
-# Audio Channel Splitter
-Splits each audio channel in a file into its own separate file.
-
 # Add Text
 Essentially a basic meme generator. Allows a user to add top text and bottom text.
 
@@ -16,6 +13,12 @@ Randomly zooms in and crops a random part of a random frame from a video and exp
 
 # Audio Sync
 Tries to sync audio with a video. By default, the program finds a version of the input file not ending in ` - blur` as I use it for that program, but that can be easily changed. If no file is found automatically, it will ask for one.
+
+# Audio Channel Splitter
+Splits each audio channel in a file into its own separate file.
+
+# Audio Combiner
+Combines audio files into a single file, with support for individual volume adjustment and videos.
 
 # Change FPS
 Changes the framerate of a video.
