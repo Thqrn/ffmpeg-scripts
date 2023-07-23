@@ -49,15 +49,21 @@ for %%a in (%*) do (
 cls
 
 :: set a volume for each audio input
-set audiofile=0
+set audiofile=1
 for %%a in (%*) do (
+    set /a inputindex+=1
     set /p "volume=Input a volume for %%~na (1.0 is default) or leave blank: "
+    if not !inputindex!==%videoinput% (set /p "start=Input from what point the audio in %%~na should start or leave blank: ") else (set audiofile=0)
     if not defined volume set volume=1.0
+    if not defined start set start=0
     set volumes=!volumes![!audiofile!:a]volume=!volume![out!audiofile!]
+    if !inputindex!==%videoinput% (set "ffinputs= -i %%a!ffinputs!") else (set "ffinputs=!ffinputs! -ss !start! -i %%a")
     set outaudio=!outaudio![out!audiofile!]
     set "volume="
     set /a audiofile+=1
+    if %audiofile%==1 set audiofile=!inputindex!
     if not !audiofile!==%inputs% set volumes=!volumes!,
+    echo.
 )
 
 cls
@@ -65,11 +71,6 @@ cls
 choice /m "Normalize audio" 
 if %errorlevel% == 1 set normalize=1
 if %errorlevel% == 2 set normalize=0
-:: for each input
-for %%a in (%*) do (
-    set /a inputindex+=1
-    if !inputindex!==%videoinput% (set "ffinputs= -i %%a!ffinputs!") else (set "ffinputs=!ffinputs! -i %%a")
-)
 
 cls
 
