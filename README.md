@@ -56,6 +56,9 @@ Allows you to replace the audio in a video using audio from another file.
 # Resample Video
 Uses tmix to blend the frames of a video together to create a lower framerate video.
 
+# Trimmer
+Simple and lossless video/audio trimmer. Should work with any media files.
+
 # Upscale NN
 Scales a file with nearest neighbor. This works with images, videos, gifs, etc. It's planned to add more algorithms in the future.
 
