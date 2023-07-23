@@ -116,14 +116,12 @@ if %pixel%==0 (
     for %%a in (%*) do (
         set filename=%%~dpna ^(%selectres%^)
         if exist "!filename!.mp4" call :renamefile "!filename!"
-        echo ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -i %%a -vf "scale=%res%:-2:flags=%scaler%,setsar=1:1" %encodingargs% -c:a copy "!filename!.mp4"
         ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -i %%a -vf "scale=%res%:-2:flags=%scaler%,setsar=1:1" %encodingargs% -c:a copy "!filename!.mp4"
     )
 ) else (
     for %%a in (%*) do (
         set filename=%%~dpna ^(%selectres%^)
         if exist "!filename!.mp4" call :renamefile "!filename!"
-        echo ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -i %%a -vf "%scaler%=%res%" %encodingargs% -c:a copy "!filename!.mp4"
         ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -i %%a -vf "%scaler%=%res%" %encodingargs% -c:a copy "!filename!.mp4"
     )
 )
@@ -136,7 +134,6 @@ exit
 :renamefile
 :: start of the repeat until loop (repeats until the file doesn't exist)
 :renamefileloop
-echo %filename%
 set /a "i+=1"
 if exist "%filename% (%i%).mp4" goto renamefileloop
 set "filename=%filename% (%i%)"
