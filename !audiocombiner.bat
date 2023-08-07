@@ -2,6 +2,8 @@
 :: This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 :: You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
+:: Copyright 2023 Thqrn. Licensed under the GNU General Public License v3.0.
+
 :: @froest on Discord
 :: https://github.com/Thqrn/ffmpeg-scripts
 
@@ -21,7 +23,7 @@ where /q ffmpeg.exe || (
 :: find the number of inputs
 for %%a in (%*) do (
     set /a inputs+=1
-    echo [!inputs!] %%~dpna
+    echo [!inputs!] %%~dpnxa
     set values=!values!!inputs!
     if !inputs! GTR 9 echo Too many inputs ^(>9^), exiting... && pause && exit
 )
@@ -48,21 +50,24 @@ for %%a in (%*) do (
 
 cls
 
+:: need to make sure durations and audio and shit are working
+
+set i=0
 :: set a volume for each audio input
-set audiofile=1
 for %%a in (%*) do (
     set /a inputindex+=1
+    set volume=1.0
     set /p "volume=Input a volume for %%~na (1.0 is default) or leave blank: "
-    if not !inputindex!==%videoinput% (set /p "start=Input from what point the audio in %%~na should start or leave blank: ") else (set audiofile=0)
+    set start=0
+    set /p "start=Input from what point the audio/video from %%~na should start or leave blank: "
     if not defined volume set volume=1.0
     if not defined start set start=0
-    set volumes=!volumes![!audiofile!:a]volume=!volume![out!audiofile!]
-    if !inputindex!==%videoinput% (set "ffinputs= -i %%a!ffinputs!") else (set "ffinputs=!ffinputs! -ss !start! -i %%a")
-    set outaudio=!outaudio![out!audiofile!]
+    if defined volumes set volumes=!volumes!,
+    set volumes=!volumes![!i!:a]volume=!volume![out!i!]
+    set "ffinputs=!ffinputs! -ss !start! -i %%a"
+    set outaudio=!outaudio![out!i!]
     set "volume="
-    set /a audiofile+=1
-    if %audiofile%==1 set audiofile=!inputindex!
-    if not !audiofile!==%inputs% set volumes=!volumes!,
+    set /a i+=1
     echo.
 )
 
@@ -74,9 +79,11 @@ if %errorlevel% == 2 set normalize=0
 
 cls
 
+ffprobe -i "%videofile%%ext%" -show_entries format=duration -v quiet -of csv="p=0" > %temp%\fileduration.txt
+set /p duration=<%temp%\fileduration.txt
+if exist "%temp%\fileduration.txt" (del "%temp%\fileduration.txt")
 if exist "%videofile% (combined audio)%ext%" (call :renamefile) else (set "filename=%videofile% (combined audio)%ext%")
-ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=first" -shortest -c:v:0 copy -bsf:v:0 null -c:a aac -b:a 320k "%filename%"
-echo ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%:duration=first;[0:v]copy" -shortest -c:v:0 copy -bsf:v:0 null -c:a aac -b:a 320k "%filename%"
+ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats%ffinputs% -filter_complex "%volumes%;%outaudio%amix=inputs=%audioinputs%:normalize=%normalize%,atrim=duration=%duration%" -shortest -c:v:0 copy -bsf:v:0 null -c:a aac -b:a 320k "%filename%"
 
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
