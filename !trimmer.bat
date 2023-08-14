@@ -26,7 +26,7 @@ set /a end=%start%+%duration%
 echo.
 echo Trimming video from %start% seconds to %end% seconds...
 
-ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -ss %start% -t %time% -i %1 -c copy "%~dpn1 (%start%-%end%)%~x1"
+ffmpeg -stats_period 0.05 -hide_banner -loglevel error -stats -ss %start% -t %duration% -i %1 -c copy "%~dpn1 (%start%-%end%)%~x1"
 
 where /q ffplay || exit
 if not exist "C:\Windows\Media\notify.wav" (exit) else ffplay "C:\Windows\Media\notify.wav" -volume 50 -autoexit -showmode 0 -loglevel quiet
