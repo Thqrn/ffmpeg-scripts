@@ -21,3 +21,5 @@ set filter=%filter% -map_channel 0.1.%total% "audio channels/%name%_%total%.wav"
 set /a total=%total%+1
 if %total% lss %channels% goto :chanloop
 ffmpeg -stats_period 0.05 -hide_banner -loglevel fatal -stats -i %1%filter%
+pause
+exit
