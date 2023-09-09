@@ -11,6 +11,9 @@ Splits each audio channel in a file into its own separate file.
 # Audio Combiner
 Combines audio files into a single file, with support for individual volume adjustment and videos.
 
+# Audio Reencoder
+Reencodes audio to be more compatible. Designed for use with After Effects.
+
 # Audio Replacer
 Allows you to replace the audio in a video using audio from another file.
 
